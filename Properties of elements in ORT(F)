@@ -1,0 +1,96 @@
+/*****************************************
+Name : Properties of elements in ORT(F)
+Author : Panthakan Boonsuriyatham, DPST30
+Lang : cpp
+DPST Project 2015
+*****************************************/
+#include <cstdio>
+#include <conio.h>
+int fence_val[100];
+int map_of[100];
+int n,cnt;
+void printMap()
+{
+    for(int i=0; i<n; ++i)
+        printf("%d ",map_of[i]+1);
+    printf("\n");
+}
+bool isReverse()
+{
+    for(int i=1; i<n; ++i)
+    {
+        if(i%2==1)
+        {
+            if(fence_val[map_of[i]]>fence_val[map_of[i-1]])
+                return false;
+        }
+        else if(fence_val[map_of[i]]<fence_val[map_of[i-1]])
+            return false;
+    }
+    return true;
+}
+bool isPreserve()
+{
+    for(int i=1; i<n; ++i)
+    {
+        if(i%2==1)
+        {
+            if(fence_val[map_of[i]]<fence_val[map_of[i-1]])
+                return false;
+        }
+        else if(fence_val[map_of[i]]>fence_val[map_of[i-1]])
+            return false;
+    }
+    return true;
+}
+bool isCoreg()
+{
+    for(int i=0; i<n; ++i)
+        if(map_of[map_of[map_of[i]]] != map_of[i])
+            return false;
+    return true;
+}
+void whenItwasfilled()
+{
+    bool p=isPreserve(),r=isReverse();
+    if((p || r))
+    {
+        if(p && r)
+            printf("both ");
+        else if(p)
+            printf("pres ");
+        else
+            printf("reve ");
+        if(isCoreg())
+            printf("co ");
+        else
+            printf("no ");
+        printMap();
+        ++cnt;
+    }
+}
+void getFlood(int stage,int val)
+{
+    map_of[stage]=val;
+    if(stage==n-1)
+    {
+        whenItwasfilled();
+        return;
+    }
+    if(val!=0)
+        getFlood(stage+1,val-1);
+    getFlood(stage+1,val);
+    if(val!=n-1)
+        getFlood(stage+1,val+1);
+}
+int main()
+{
+    scanf("%d",&n);
+    for(int i=1; i<n; i+=2)
+        ++fence_val[i];
+    for(int i=0; i<n; ++i)
+        getFlood(0,i);
+    printf("Total : %d\n",cnt);
+    getch();
+    return 0;
+}
